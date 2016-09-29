@@ -45,18 +45,6 @@ RUN apt-get -qq update \
     unixodbc-dev \
     unzip
 
-# FilGDB config
-# Assumes 'FileGDB_API' directory exists in the same place as this Dockerfile 
-ADD . /usr/local/src/gdal-docker/
-
-ENV FILEGDB=/usr/local/src/gdal-docker/FileGDB_API
-
-RUN echo "${FILEGDB}/lib" > /etc/ld.so.conf.d/file_gdb_so.conf
-RUN ldconfig
-
-RUN cp -r /usr/local/src/gdal-docker/FileGDB_API/include/* /usr/local/include \
-	&& cp -r /usr/local/src/gdal-docker/FileGDB_API/lib/* /usr/local/lib
-
 # Install GDAL
 ENV GDAL_VERSION 2.1.1
 
@@ -77,8 +65,6 @@ RUN ./configure \
     --with-spatialite \
     --with-threads \
     --with-webp \
-    --with-fgdb=/usr/local \
-    --with-fgdb=${FILEGDB} \
 && make install \
 && ldconfig
 
